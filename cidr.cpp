@@ -10,16 +10,17 @@ This is a simple program for printing the subnet mask, broadcast address and net
 #include <iostream>
 #include <bitset>
 #include <vector>
+#include <cstdint>
 
 
-void set_network_and_broadcast_addr(const short& nwb, const std::vector<std::bitset<8>>& bs, std::vector<std::bitset<8>>& addr, const char which_nw)
+void set_network_and_broadcast_addr(const uint8_t& nwb, const std::vector<std::bitset<8>>& bs, std::vector<std::bitset<8>>& addr, const char which_nw)
 {
 
-	short full_octet = nwb / 8;
-	short partial_octet = nwb % 8 !=0 ? 1: 0;
-	short empty_octet = 4 - (full_octet + partial_octet);
+	uint8_t full_octet = nwb / 8;
+	uint8_t partial_octet = nwb % 8 !=0 ? 1: 0;
+	uint8_t empty_octet = 4 - (full_octet + partial_octet);
 
-	for (auto octet: bs)
+	for (auto& octet: bs)
 	{
 
 		if (full_octet >= 1)
@@ -31,10 +32,10 @@ void set_network_and_broadcast_addr(const short& nwb, const std::vector<std::bit
 
 		if (partial_octet)
 		{
-			short val = 0;
-			short pow = 128;
-			short br = nwb % 8;
-			for (short i = 0; i < br; i++)
+			uint8_t val = 0;
+			uint8_t pow = 128;
+			uint8_t br = nwb % 8;
+			for (uint8_t i = 0; i < br; i++)
 			{
 				if (octet[octet.size() - 1 -i] == 1)
 					val += pow;
@@ -42,15 +43,15 @@ void set_network_and_broadcast_addr(const short& nwb, const std::vector<std::bit
 			}
 			if (which_nw == 'b')
 			{
-				short res = 1;
+				uint8_t res = 1;
 
-				for (short j = (octet.size() - br); j > 0; --j)
+				for (uint8_t j = (octet.size() - br); j > 0; --j)
 				{
 					res *= 2;
 				}
 				val += (res - 1);
 			}
-			addr.push_back(short(val));
+			addr.push_back(uint8_t(val));
 			partial_octet--;
 			continue;
 		}
@@ -59,10 +60,9 @@ void set_network_and_broadcast_addr(const short& nwb, const std::vector<std::bit
 		if (empty_octet >= 1)
 		{
 			if (which_nw == 'n')
-				addr.push_back(short(0));
+				addr.push_back(uint8_t(0));
 			else
-				addr.push_back(short(255));
-
+				addr.push_back(uint8_t(255));
 			empty_octet--;
 		}
 
@@ -70,36 +70,35 @@ void set_network_and_broadcast_addr(const short& nwb, const std::vector<std::bit
 }
 
 
-void set_subnet_mask(const short& nwb, std::vector<std::bitset<8>>& sm)
+void set_subnet_mask(const uint8_t& nwb, std::vector<std::bitset<8>>& sm)
 {
 
-	short full_octet = nwb / 8;
-	short partial_octet = nwb % 8 !=0 ? 1: 0;
-	short empty_octet = 4 - (full_octet + partial_octet);
+	uint8_t full_octet = nwb / 8;
+	uint8_t partial_octet = nwb % 8 !=0 ? 1: 0;
+	uint8_t empty_octet = 4 - (full_octet + partial_octet);
 
 	while (full_octet--)
 	{
-		sm.push_back(short(255));
-		
+		sm.push_back(uint8_t(255));
 	}
 
 	if (partial_octet)
 	{
-		short pow = 128;
-		short val = 0;
-		for (short i = nwb % 8; i > 0; --i)
+		uint8_t pow = 128;
+		uint8_t val = 0;
+		for (uint8_t i = nwb % 8; i > 0; --i)
 		{
 			val += pow;
 			pow /= 2;
 		}
 
-		sm.push_back(short(val));
+		sm.push_back(uint8_t(val));
 
 	}
 
 	while (empty_octet--)
 	{
-		sm.push_back(short(0));
+		sm.push_back(uint8_t(0));
 	}
 
 }
@@ -108,12 +107,12 @@ void set_subnet_mask(const short& nwb, std::vector<std::bitset<8>>& sm)
 void print_octets_in_binary(const std::vector<std::bitset<8>>& bs, std::string& adr)
 {
 
-	short count = 1;
+	uint8_t count = 1;
 
-	for (auto octet: bs)
+	for (auto& octet: bs)
 	{       
-		short oct_val = 0;
-		short pow = 128;
+		uint8_t oct_val = 0;
+		uint8_t pow = 128;
 		for (size_t i = 0; i < octet.size(); ++i)
 		{
 			std::cout << octet[octet.size() - 1 - i];
@@ -139,26 +138,26 @@ void print_octets_in_binary(const std::vector<std::bitset<8>>& bs, std::string& 
 }
 
 
-void check_no_of_network_bits(const short& nwb)
+void check_no_of_network_bits(const uint8_t& nwb)
 {
 
 	if (nwb < 0 || nwb > 32)
 	{
-		std::cout << "Invalid no of network bits\n";
+		std::cout << "Invalid no of network bits.\n";
 		exit(1);
 	}
 
 }
 
 
-void check_octet_value(short& val, short& octet_no)
+void check_octet_value(short& val, uint8_t& octet_no)
 {
 
 
 	if (val < 0 || val > 255)
 	{
 
-		std::cout << "Resulting in error in octet no: " << octet_no << "\n";
+		std::cout << "Resulting in error in octet no: " << +octet_no << "\n";
 		exit(1);
 	}
 	else
@@ -173,13 +172,13 @@ void check_octet_value(short& val, short& octet_no)
 int main()
 {
 
-	std::string ip_addr = "";
+	std::string ip_addr = "255.255.2.255/33";
 	std::cout << "Enter the ip address:\n";
 	std::cin >> ip_addr;
 	short value = 0;
-	short no_of_host_bits;
-	short no_of_network_bits;
-	short octet_no = 1;
+	uint8_t no_of_host_bits;
+	uint8_t no_of_network_bits;
+	uint8_t octet_no = 1;
 	std::string subnet_mask;
 	std::string network_address;
 	std::string broadcast_address;
@@ -189,7 +188,7 @@ int main()
 	std::vector<std::bitset<8>> n_addr;
 	std::vector<std::bitset<8>> b_addr;
 
-	for (auto chr: ip_addr)
+	for (auto& chr: ip_addr)
 	{      
 
 		short tmp;
@@ -198,9 +197,9 @@ int main()
 		{
 			tmp = value;
 			check_octet_value(value, octet_no);
-			bset.push_back(short(tmp));
-			short val = 0;
-			short iter_value = ip_addr.length() - 1;
+			bset.push_back(uint8_t(tmp));
+			uint8_t val = 0;
+			uint8_t iter_value = ip_addr.length() - 1;
 
 			if (ip_addr[ip_addr.length() - 3] == '/')
 			{
@@ -224,20 +223,25 @@ int main()
 		{     
 			tmp = value;
 			check_octet_value(value, octet_no);
-			bset.push_back(short(tmp));
+			bset.push_back(uint8_t(tmp));
 
 		}
 		else
 		{       
-			value = (value * 10)  + abs(48 - chr);
+			if (chr < 48 || chr > 57)
+			{
+				std::cout << "\nInvalid character found in octet no: " << +octet_no << "\n";
+				exit(1);
+			}
+			value = (value * 10)  + abs(48 - chr);      
 
 		}
 
 	}
 
 
-	std::cout << "\n\nNo of network bits: " << no_of_network_bits << "\n";
-	std::cout << "No of host bits: " << no_of_host_bits << "\n";
+	std::cout << "\n\nNo of network bits: " << +no_of_network_bits << "\n";
+	std::cout << "No of host bits: " << +no_of_host_bits << "\n";
 	std::cout << "IPv4 in binary: \n";
 	print_octets_in_binary(bset, ipv_addr);
 	std::cout << "IPv4: " << ipv_addr << "\n";
