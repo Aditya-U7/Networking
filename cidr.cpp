@@ -172,7 +172,7 @@ void check_octet_value(short& val, uint8_t& octet_no)
 int main()
 {
 
-	std::string ip_addr = "255.255.2.255/33";
+	std::string ip_addr = "";
 	std::cout << "Enter the ip address:\n";
 	std::cin >> ip_addr;
 	short value = 0;
