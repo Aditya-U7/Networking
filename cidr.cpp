@@ -80,7 +80,7 @@ void set_subnet_mask(const short& nwb, std::vector<std::bitset<8>>& sm)
 	while (full_octet--)
 	{
 		sm.push_back(short(255));
-		//sub_m += "255.";
+		
 	}
 
 	if (partial_octet)
@@ -90,7 +90,7 @@ void set_subnet_mask(const short& nwb, std::vector<std::bitset<8>>& sm)
 		for (short i = nwb % 8; i > 0; --i)
 		{
 			val += pow;
-			pow/=2;
+			pow /= 2;
 		}
 
 		sm.push_back(short(val));
@@ -180,7 +180,6 @@ int main()
 	short no_of_host_bits;
 	short no_of_network_bits;
 	short octet_no = 1;
-	short count = -1;
 	std::string subnet_mask;
 	std::string network_address;
 	std::string broadcast_address;
